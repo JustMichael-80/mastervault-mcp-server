@@ -1,0 +1,30 @@
+{
+  "name": "mastervault-mcp-server",
+  "version": "1.0.0",
+  "description": "A headless, filesystem-backed MCP server that serves any MasterVault — its files and its operating protocol — to any MCP client. No Obsidian required.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "mastervault-mcp-server": "dist/index.js"
+  },
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prepare": "npm run build"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "gray-matter": "^4.0.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
