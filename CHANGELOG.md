@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.2.0 — 2026-07-27
+### Added
+- **Multi-vault discovery mode (`--discover <root>`).** Point the server at a
+  parent directory and it discovers every MasterVault beneath it (any directory
+  containing an `_orientation.md`), exposing them via the new
+  `mastervault_list_vaults` tool. Bounded scan depth; skips hidden/dependency
+  dirs; does not follow symlinks out of the tree. The first discovered vault is
+  served as the active vault.
+  *Idea contributed by **Grigori Korotkikh**. Adapted to the existing security
+  model: discovery only locates vaults; all file operations remain confined to a
+  path-sanitized VaultService, so a vault name can never select an arbitrary
+  path.*
+
+## 1.1.2 — 2026-07-27
+### Changed
+- Version alignment with the ModelForge downstream integration (no functional
+  change from 1.1.0).
+
 ## 1.1.0 — 2026-07-26
 ### Added
 - **Bundled build (`npm run build:bundled`).** Produces a single self-contained

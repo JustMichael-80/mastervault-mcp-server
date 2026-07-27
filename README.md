@@ -29,6 +29,18 @@ MASTERVAULT_ROOT=/absolute/path/to/vault node dist/index.js
 
 The vault path is the only configuration. Nothing is hardcoded — the same binary serves any vault.
 
+### Multi-vault discovery
+
+Point the server at a parent directory instead of a single vault, and it discovers every MasterVault beneath it (any directory containing an `_orientation.md`):
+
+```bash
+mastervault-mcp-server --discover /path/to/projects-root
+```
+
+The first discovered vault (alphabetically) becomes the active vault; the `mastervault_list_vaults` tool lists all of them by name. The scan is depth-bounded, skips hidden and dependency directories, and does not follow symlinks out of the tree. Discovery only *locates* vaults — every file operation stays confined to the active vault's sanitized root, so a vault name can never select an arbitrary path.
+
+*Discovery was contributed by [Grigori Korotkikh](https://github.com/JustMichael-80/mastervault-mcp-server).*
+
 ### Bundled single-file build
 
 For vendoring or shipping the server as one self-contained file with no `npm install` at the consumer end:

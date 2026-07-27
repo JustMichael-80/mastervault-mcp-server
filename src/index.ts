@@ -19,11 +19,13 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { promises as fs } from "node:fs";
 import * as path from "node:path";
 import { VaultService } from "./services/vault.js";
+import { VaultDiscovery } from "./services/discovery.js";
 import { registerProtocolTools } from "./tools/protocol.js";
 import { registerFileTools } from "./tools/files.js";
 import { registerDeleteTools } from "./tools/delete.js";
+import { registerDiscoveryTools } from "./tools/discovery.js";
 
-const VERSION = "1.1.2";
+const VERSION = "1.2.0";
 
 function usage(): string {
   return [
@@ -72,14 +74,44 @@ async function resolveVaultRoot(): Promise<string> {
 }
 
 async function main(): Promise<void> {
-  const vaultRoot = await resolveVaultRoot();
-  const vault = new VaultService(vaultRoot);
-
   const server = new McpServer({
     name: "mastervault-mcp-server",
     version: VERSION,
   });
 
+  // Discovery mode: `--discover <root>` scans a parent directory for vaults.
+  // The first discovered vault (alphabetically) becomes the active vault served
+  // through the confined VaultService; mastervault_list_vaults exposes the rest.
+  // Credit: multi-vault discovery idea by Grigori Korotkikh.
+  const args = process.argv.slice(2);
+  const discoverIdx = args.indexOf("--discover");
+  let activeVaultRoot: string;
+
+  if (discoverIdx !== -1) {
+    const discoverRoot = args[discoverIdx + 1] || process.env.MASTERVAULT_ROOT;
+    if (!discoverRoot) {
+      console.error("ERROR: --discover requires a root directory.\n");
+      console.error(usage());
+      process.exit(1);
+    }
+    const absRoot = path.resolve(discoverRoot);
+    const discovery = new VaultDiscovery(absRoot);
+    const vaults = await discovery.discover();
+    if (vaults.length === 0) {
+      console.error(`ERROR: no MasterVaults found under ${absRoot}`);
+      process.exit(1);
+    }
+    activeVaultRoot = vaults[0].path;
+    registerDiscoveryTools(server, discovery);
+    console.error(
+      `Discovery mode: ${vaults.length} vault(s) under ${absRoot}; ` +
+        `active vault: ${vaults[0].name}`
+    );
+  } else {
+    activeVaultRoot = await resolveVaultRoot();
+  }
+
+  const vault = new VaultService(activeVaultRoot);
   registerProtocolTools(server, vault);
   registerFileTools(server, vault);
   registerDeleteTools(server, vault);
@@ -89,7 +121,7 @@ async function main(): Promise<void> {
 
   // stdio servers must not log to stdout (it carries the protocol). Use stderr.
   console.error(`mastervault-mcp-server v${VERSION} running on stdio`);
-  console.error(`Serving vault: ${vaultRoot}`);
+  console.error(`Serving vault: ${activeVaultRoot}`);
 }
 
 main().catch((error) => {
