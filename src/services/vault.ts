@@ -69,6 +69,13 @@ export class PathSecurityError extends Error {
 
 export class VaultService {
   private readonly vaultRoot: string;
+  /** The vault root with all symlinks resolved (canonical form). Resolved
+   *  lazily once via realpath and cached. On macOS especially, the OS puts
+   *  real directories behind symlinks (e.g. /var -> /private/var, and many
+   *  temp/home paths), so fs.realpath() of a file inside the vault returns a
+   *  canonicalized prefix that must be compared against a canonicalized root —
+   *  not the lexical one — or legitimate in-vault paths get falsely rejected. */
+  private canonicalRoot: string | null = null;
 
   constructor(vaultRoot: string) {
     // Resolve to an absolute, normalized path once at construction.
@@ -78,6 +85,19 @@ export class VaultService {
   /** The absolute vault root, for diagnostics. */
   getRoot(): string {
     return this.vaultRoot;
+  }
+
+  /** Lazily resolve and cache the canonical (symlink-resolved) vault root.
+   *  Falls back to the lexical root if the root itself can't be realpath'd. */
+  private async getCanonicalRoot(): Promise<string> {
+    if (this.canonicalRoot === null) {
+      try {
+        this.canonicalRoot = await fs.realpath(this.vaultRoot);
+      } catch {
+        this.canonicalRoot = this.vaultRoot;
+      }
+    }
+    return this.canonicalRoot;
   }
 
   /**
@@ -110,7 +130,12 @@ export class VaultService {
   private async assertRealPathInside(absPath: string): Promise<void> {
     try {
       const real = await fs.realpath(absPath);
-      const rel = path.relative(this.vaultRoot, real);
+      // Compare against the canonicalized root, not the lexical one: realpath
+      // resolves symlinks on both the target and (via getCanonicalRoot) the
+      // root, so an OS-inserted symlink prefix like macOS's /var -> /private/var
+      // doesn't make an in-vault path look external.
+      const canonicalRoot = await this.getCanonicalRoot();
+      const rel = path.relative(canonicalRoot, real);
       if (rel !== "" && (rel.startsWith("..") || path.isAbsolute(rel))) {
         throw new PathSecurityError(absPath);
       }

@@ -5,6 +5,21 @@ handed to a cheaper model (in ModelForge, Claude Code, or a Sonnet session)
 rather than spending premium tokens on it. v1 is complete and verified without
 any of the below; these are additive.
 
+## STATUS (updated 2026-07-26)
+- [DONE] Task 2 — Unit tests. 25 tests via node:test in test/vault.test.mjs +
+  test/tools.test.mjs, wired to `npm test`. Covers VaultService, the security
+  boundary (traversal/absolute/symlink/null-byte), and the tool layer (patch
+  match rejection, log_decision section-aware append, stage_delete collision
+  suffixing, orient missing-file handling). All green.
+- [DONE] Task 4 (partial) — npm publish prep. package.json has files/repository/
+  keywords/publishConfig + a prepublishOnly hook (clean+build+test). `npm pack
+  --dry-run` verified: ships dist/ + README + LICENSE only (27.8 kB). Ready to
+  `npm publish` when the repo goes public. LICENSE already present.
+- [TODO] Task 1 — Evaluation suite (the mcp-builder XML eval format). Not done.
+- [TODO] Task 3 — Git read tools. Not done.
+- [TODO] Task 4 (remainder) — .gitignore already in repo; actual `npm publish`
+  waits for the public flip.
+
 ## Context for the model picking this up
 
 `mastervault-mcp-server` is a TypeScript stdio MCP server that serves a

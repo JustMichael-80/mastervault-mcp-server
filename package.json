@@ -1,7 +1,7 @@
 {
   "name": "mastervault-mcp-server",
-  "version": "1.0.0",
-  "description": "A headless, filesystem-backed MCP server that serves any MasterVault — its files and its operating protocol — to any MCP client. No Obsidian required.",
+  "version": "1.0.1",
+  "description": "A headless, filesystem-backed MCP server that serves any MasterVault \u2014 its files and its operating protocol \u2014 to any MCP client. No Obsidian required.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -12,7 +12,9 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "clean": "rm -rf dist",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "test": "node --test \"test/**/*.test.mjs\"",
+    "prepublishOnly": "npm run clean && npm run build && npm test"
   },
   "engines": {
     "node": ">=18"
@@ -26,5 +28,29 @@
     "@types/node": "^22.10.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JustMichael-80/mastervault-mcp-server.git"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "obsidian",
+    "vault",
+    "mastervault",
+    "stdio",
+    "knowledge-base",
+    "second-brain"
+  ],
+  "author": "ChronoDyne Systems, Inc.",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
   }
 }
