@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.1.0 — 2026-07-26
+### Added
+- **Bundled build (`npm run build:bundled`).** Produces a single self-contained
+  `dist-bundled/index.js` (~870kb) with all dependencies inlined via esbuild, so
+  the server can be shipped/vendored as one file with no `npm install` at the
+  consumer end. Includes a `createRequire` banner shim for CommonJS interop under
+  ESM. *Contributed by the ModelForge integration (voidstackloop) and folded back
+  upstream.*
+- Repository/homepage/author metadata for npm publish readiness.
+
+### Fixed
+- Version string in `index.ts` now matches `package.json` (was stale at 1.0.0).
+
+### Note
+- Verified: bundled server completes an MCP stdio handshake and exposes all 9
+  tools, in addition to the standard `tsc` build. Full 25-test suite green.
+
 ## 1.0.1 — 2026-07-26
 ### Fixed
 - **Path security check no longer rejects legitimate in-vault paths on macOS.**

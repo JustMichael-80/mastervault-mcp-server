@@ -29,6 +29,18 @@ MASTERVAULT_ROOT=/absolute/path/to/vault node dist/index.js
 
 The vault path is the only configuration. Nothing is hardcoded — the same binary serves any vault.
 
+### Bundled single-file build
+
+For vendoring or shipping the server as one self-contained file with no `npm install` at the consumer end:
+
+```bash
+npm run build:bundled
+# produces dist-bundled/index.js — all dependencies inlined (~870kb)
+node dist-bundled/index.js /absolute/path/to/vault
+```
+
+The bundle is produced by esbuild (Node 18 target, ESM) with a `createRequire` shim for CommonJS interop. Useful when another application packages this server as a component rather than depending on it as an installed module.
+
 ## Connecting a client
 
 ### ModelForge
@@ -89,10 +101,16 @@ A vault that lacks these still works as a plain file tree — the protocol tools
 ## Development
 
 ```bash
-npm run dev     # tsx watch
-npm run build   # tsc -> dist/
-npm start       # node dist/index.js <vault>
+npm run dev            # tsx watch
+npm run build          # tsc -> dist/
+npm run build:bundled  # esbuild -> dist-bundled/index.js (single file)
+npm test               # node --test, 25 tests
+npm start              # node dist/index.js <vault>
 ```
+
+### Tests
+
+The suite (`test/vault.test.mjs`, `test/tools.test.mjs`) covers the filesystem layer, the path-confinement security boundary (traversal, absolute paths, null bytes, symlink-escape), and the tool layer (patch match rejection, section-aware decision logging, soft-delete collision handling). A note on platform coverage: the test runner's sandbox may not reproduce every target-OS filesystem behavior (e.g. macOS symlink canonicalization), so a green run in CI is necessary but not sufficient — verify on the deployment platform before relying on filesystem-boundary behavior.
 
 ## License
 

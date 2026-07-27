@@ -23,7 +23,7 @@ import { registerProtocolTools } from "./tools/protocol.js";
 import { registerFileTools } from "./tools/files.js";
 import { registerDeleteTools } from "./tools/delete.js";
 
-const VERSION = "1.0.0";
+const VERSION = "1.1.0";
 
 function usage(): string {
   return [

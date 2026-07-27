@@ -1,7 +1,7 @@
 {
   "name": "mastervault-mcp-server",
-  "version": "1.0.1",
-  "description": "A headless, filesystem-backed MCP server that serves any MasterVault \u2014 its files and its operating protocol \u2014 to any MCP client. No Obsidian required.",
+  "version": "1.1.0",
+  "description": "A headless, filesystem-backed MCP server that serves any MasterVault — its files and its operating protocol — to any MCP client. No Obsidian required.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -11,10 +11,11 @@
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist dist-bundled",
     "prepare": "npm run build",
     "test": "node --test \"test/**/*.test.mjs\"",
-    "prepublishOnly": "npm run clean && npm run build && npm test"
+    "prepublishOnly": "npm run clean && npm run build && npm test",
+    "build:bundled": "esbuild src/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist-bundled/index.js --banner:js=\"import { createRequire as __mvCreateRequire } from 'node:module'; const require = __mvCreateRequire(import.meta.url);\""
   },
   "engines": {
     "node": ">=18"
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "esbuild": "^0.24.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
@@ -36,7 +38,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JustMichael-80/mastervault-mcp-server.git"
+    "url": "https://github.com/JustMichael-80/mastervault-mcp-server.git"
   },
   "keywords": [
     "mcp",
@@ -48,9 +50,10 @@
     "knowledge-base",
     "second-brain"
   ],
-  "author": "ChronoDyne Systems, Inc.",
+  "author": "JustMichael-80 (ChronoDyne Systems, Inc.)",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "homepage": "https://github.com/JustMichael-80/mastervault-mcp-server#readme"
 }
