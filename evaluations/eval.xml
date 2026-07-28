@@ -1,0 +1,66 @@
+<!--
+  Evaluation suite for mastervault-mcp-server (mcp-builder Phase 4 format).
+
+  Each qa_pair is independent, read-only, requires one or more tool calls
+  against evaluations/fixture-vault/, and has a single verifiable answer that
+  is stable given the fixture's fixed content. Run the server against the
+  fixture vault:
+
+    node dist/index.js ./evaluations/fixture-vault
+
+  (For git-related pairs, initialize the fixture as a git repo first; those
+  pairs are marked.)
+-->
+<evaluation>
+
+  <qa_pair>
+    <question>Using the orientation tool, what is the project codename stated in this vault's global filter?</question>
+    <answer>HELIOTROPE</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Orient on the vault, then report the primary benchmark target accuracy stated in the context file.</question>
+    <answer>87.47 percent</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Search the vault for the keyword ZEPHYR. Which file contains it?</question>
+    <answer>Notes/alpha.md</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Search the vault for the migration deadline. What date is it?</question>
+    <answer>2026-09-15</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Read the decision log and report the est_confidence value recorded for the vault-structure seed row.</question>
+    <answer>75%</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Using the confidence summary tool, what is the recorded sample size (n) for the infrastructure category?</question>
+    <answer>4</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>List the Notes directory. How many markdown files does it contain?</question>
+    <answer>3</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Search the vault for which note discusses Constructal Law, and report that note's filename.</question>
+    <answer>Notes/alpha.md</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Read the decision log and report the verdict recorded for the infrastructure "bundled build" row.</question>
+    <answer>agree</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Orient on the vault. According to the orientation protocol, what is the second file the reader should read?</question>
+    <answer>CLEO_context.md</answer>
+  </qa_pair>
+
+</evaluation>

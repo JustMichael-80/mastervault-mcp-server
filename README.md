@@ -90,8 +90,11 @@ In **Settings → MCP servers**, add a **stdio** server:
 | `mastervault_write` | files | ✍️ | Creates or overwrites a file. |
 | `mastervault_patch` | files | ✍️ | Replaces one exact, unique text block in a file. |
 | `mastervault_stage_delete` | delete | ✍️ | Moves a file to `_ToDelete/` and logs the proposal. **Never hard-deletes.** |
+| `mastervault_git_status` | git | ✅ | Git status of the vault (if under version control). |
+| `mastervault_git_log` | git | ✅ | Recent commits. |
+| `mastervault_git_diff` | git | ✅ | Working-tree or staged diff, optionally for one file. |
 
-Every tool supports `response_format: "markdown"` (default) or `"json"`.
+Every tool supports `response_format: "markdown"` (default) or `"json"`. The three git tools are read-only; on a non-git vault they return a clear "not a repository" message rather than an error. In `--discover` mode, `mastervault_list_vaults` is also exposed.
 
 ## Security model
 

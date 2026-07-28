@@ -1,93 +1,27 @@
-# Handoff Spec — Deferred Work
+# HANDOFF — status
 
-This is the scoped, mechanical work deliberately left out of v1 so it can be
-handed to a cheaper model (in ModelForge, Claude Code, or a Sonnet session)
-rather than spending premium tokens on it. v1 is complete and verified without
-any of the below; these are additive.
+All originally-deferred work is now complete as of v1.3.0 (2026-07-28).
 
-## STATUS (updated 2026-07-26)
-- [DONE] Task 2 — Unit tests. 25 tests via node:test in test/vault.test.mjs +
-  test/tools.test.mjs, wired to `npm test`. Covers VaultService, the security
-  boundary (traversal/absolute/symlink/null-byte), and the tool layer (patch
-  match rejection, log_decision section-aware append, stage_delete collision
-  suffixing, orient missing-file handling). All green.
-- [DONE] Task 4 (partial) — npm publish prep. package.json has files/repository/
-  keywords/publishConfig + a prepublishOnly hook (clean+build+test). `npm pack
-  --dry-run` verified: ships dist/ + README + LICENSE only (27.8 kB). Ready to
-  `npm publish` when the repo goes public. LICENSE already present.
-- [TODO] Task 1 — Evaluation suite (the mcp-builder XML eval format). Not done.
-- [TODO] Task 3 — Git read tools. Not done.
-- [TODO] Task 4 (remainder) — .gitignore already in repo; actual `npm publish`
-  waits for the public flip.
+- [DONE] Task 1 — Evaluation suite. `evaluations/eval.xml` (10 QA pairs) +
+  `evaluations/fixture-vault/`. Answers validated against the real tools.
+- [DONE] Task 2 — Unit tests. `npm test`, now 31 tests: vault layer, security
+  boundary, tool layer, git tier, shell-injection safety.
+- [DONE] Task 3 — Git read tools. `mastervault_git_status/log/diff`, read-only,
+  argument-array (no injection), non-repo guarded.
+- [DONE] Task 4 — Packaging. npm-publish verified (ships dist+README+LICENSE+
+  CHANGELOG only); LICENSE + .gitignore present; bundled build available.
 
-## Context for the model picking this up
+## Remaining (optional, requires the owner's credentials — not code work)
 
-`mastervault-mcp-server` is a TypeScript stdio MCP server that serves a
-"MasterVault" (a structured Obsidian-style knowledge vault) to any MCP client,
-without Obsidian. It has 9 tools across three tiers (protocol / files / delete).
-The build passes (`npm run build`), a functional harness passes 12/12 including
-path-traversal security tests, and an MCP stdio handshake exposes all 9 tools.
-Read `README.md` first, then `src/` — start at `src/index.ts`.
+- [ ] `npm publish` — the package is publish-ready and verified via
+  `npm pack --dry-run`. Publishing requires an npm account + auth token, so it
+  is the owner's step, not automatable here. Once published,
+  `npx -y mastervault-mcp-server <vault>` works for any consumer.
+- [ ] Optional: a `.github/workflows/ci.yml` running build + test on push
+  (mirrors what the ModelForge downstream already does for its vendored copy).
 
-Do not change the security model in `src/services/vault.ts` without re-running
-`node test-harness.mjs` and keeping all security tests green.
-
-## Task 1 — Evaluation suite (mcp-builder Phase 4)
-
-The mcp-builder skill asks for 10 evaluation questions in XML. Create
-`evaluations/eval.xml` with 10 `<qa_pair>` entries that test whether an LLM can
-use these tools to answer realistic questions about a vault. Each question must
-be independent, read-only, complex (multiple tool calls), realistic, verifiable
-(single string-comparable answer), and stable.
-
-Build a small fixture vault under `evaluations/fixture-vault/` with known
-content so answers are deterministic. Example question shape: "Using orient then
-search, what confidence value is recorded for the vault-structure seed row?" →
-answer a specific string.
-
-Format per the skill:
-```xml
-<evaluation>
-  <qa_pair>
-    <question>...</question>
-    <answer>...</answer>
-  </qa_pair>
-</evaluation>
-```
-
-## Task 2 — Unit tests
-
-Convert `test-harness.mjs` into a proper test suite (node:test or vitest). Cover:
-- VaultService: read (with/without line range), list pagination, search, write,
-  append, move (collision + overwrite paths).
-- Security: `../` traversal, absolute path, escaping move, null byte — all must
-  throw `PathSecurityError` or stay confined.
-- Tool layer: patch's zero-match and multi-match rejection; log_decision
-  section-aware append when the category heading is absent vs present;
-  stage_delete collision suffixing.
-Wire it to `npm test` and a `.github/workflows/ci.yml` that runs lint + build +
-test on push.
-
-## Task 3 — Git read tools (v2 tool tier)
-
-Add read-only git helpers as a fourth tier, mirroring ModelForge's own set:
-`mastervault_git_status`, `mastervault_git_log`, `mastervault_git_diff`. All
-`readOnlyHint: true`. Shell out to `git -C <vaultRoot>` with argument arrays
-(never string interpolation — no injection surface). Guard: if the vault is not
-a git repo, return an actionable message, not an error. Keep `git_commit` out
-unless explicitly requested — writes should stay behind the existing tools.
-
-## Task 4 — Packaging niceties
-
-- Add a `LICENSE` file (MIT) to match `package.json`.
-- Add `.gitignore` (`node_modules/`, `dist/`, `*.log`).
-- Consider publishing as an npm package so the ModelForge config can use
-  `npx -y mastervault-mcp-server <vault>` like the filesystem-server example.
-
-## Explicitly NOT in scope
+## Not in scope (by design)
 
 - No hard-delete tool, ever.
-- No shell/run_command tool (clients provide their own).
-- No streamable-HTTP transport in v1 (stdio is the target for local clients like
-  ModelForge). Add later only if a remote/multi-client use case appears; the
-  mcp-builder TypeScript guide has the HTTP transport pattern ready to drop in.
+- No `git_commit` / write-git tools — git tier stays read-only.
+- No shell/run_command tool — clients provide their own.

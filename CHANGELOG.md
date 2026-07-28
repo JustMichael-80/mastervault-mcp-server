@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.3.0 — 2026-07-28
+### Added
+- **Git read-only tools** (`mastervault_git_status`, `mastervault_git_log`,
+  `mastervault_git_diff`) — a fourth tool tier for version-controlled vaults.
+  All read-only. Backed by a GitService that shells out via argument arrays
+  (never string interpolation — no shell-injection surface) and returns an
+  actionable message when the vault isn't a git repo rather than throwing.
+- **Evaluation suite** (`evaluations/eval.xml` + `evaluations/fixture-vault/`) —
+  10 QA pairs in the mcp-builder format, each verifiable against a deterministic
+  fixture vault. Answers validated against the real tools.
+- Git-tier tests folded into `npm test` (now 31 tests), including a
+  shell-injection-safety test and the non-repo guard.
+
+### Notes
+- Server now exposes 12 tools (13 in `--discover` mode). npm-publish ready:
+  `npm publish` ships dist + README + LICENSE + CHANGELOG only.
+
 ## 1.2.0 — 2026-07-27
 ### Added
 - **Multi-vault discovery mode (`--discover <root>`).** Point the server at a

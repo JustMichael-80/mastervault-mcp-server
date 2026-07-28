@@ -1,5 +1,3 @@
 node_modules/
 dist/
 *.log
-dist-bundled/
-.DS_Store

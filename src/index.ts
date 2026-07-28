@@ -20,12 +20,14 @@ import { promises as fs } from "node:fs";
 import * as path from "node:path";
 import { VaultService } from "./services/vault.js";
 import { VaultDiscovery } from "./services/discovery.js";
+import { GitService } from "./services/git.js";
 import { registerProtocolTools } from "./tools/protocol.js";
 import { registerFileTools } from "./tools/files.js";
 import { registerDeleteTools } from "./tools/delete.js";
 import { registerDiscoveryTools } from "./tools/discovery.js";
+import { registerGitTools } from "./tools/git.js";
 
-const VERSION = "1.2.0";
+const VERSION = "1.3.0";
 
 function usage(): string {
   return [
@@ -115,6 +117,7 @@ async function main(): Promise<void> {
   registerProtocolTools(server, vault);
   registerFileTools(server, vault);
   registerDeleteTools(server, vault);
+  registerGitTools(server, new GitService(activeVaultRoot));
 
   const transport = new StdioServerTransport();
   await server.connect(transport);
