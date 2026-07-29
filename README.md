@@ -39,7 +39,7 @@ mastervault-mcp-server --discover /path/to/projects-root
 
 The first discovered vault (alphabetically) becomes the active vault; the `mastervault_list_vaults` tool lists all of them by name. The scan is depth-bounded, skips hidden and dependency directories, and does not follow symlinks out of the tree. Discovery only *locates* vaults — every file operation stays confined to the active vault's sanitized root, so a vault name can never select an arbitrary path.
 
-*Discovery was contributed by [Grigori Korotkikh](https://github.com/JustMichael-80/mastervault-mcp-server).*
+*Discovery was contributed by VDMO (https://github.com/vdmo).*
 
 ### Bundled single-file build
 
